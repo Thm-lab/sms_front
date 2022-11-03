@@ -32,6 +32,18 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -96,6 +108,19 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  {
+    path: '/student',
+    component: Layout,
+    children: [
+      {
+        path: 'grade',
+        name: 'Grade',
+        component: () => import('@/views/student-get-grade'),
+        meta: { title: 'Grade', icon: 'grade' }
+      }
+    ]
+  },
+
   {
     path: '/nested',
     component: Layout,

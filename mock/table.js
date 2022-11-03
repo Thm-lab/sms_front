@@ -3,7 +3,7 @@ const Mock = require('mockjs')
 const data = Mock.mock({
   'items|30': [{
     id: '@id',
-    title: '@sentence(10, 20)',
+    title: '@sentence(2, 3)',
     'status|1': ['published', 'draft', 'deleted'],
     author: 'name',
     display_time: '@datetime',
