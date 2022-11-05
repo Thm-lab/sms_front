@@ -4,7 +4,7 @@ const data = Mock.mock({
     'grade|6': [{
         Class: '@integer(1,15)',
         Name: '@string( 2, 4)',
-        Subject: '@integer(0,150)',
+        Subject: '@string(2,3)',
         ObjectiveScore: '@integer(0,150)',
         SubjectiveScore: '@integer(0,150)',
         Score: '@integer(0,100)',
