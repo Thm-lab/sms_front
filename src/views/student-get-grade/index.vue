@@ -1,21 +1,26 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="3">
+      <el-col :span="4">
         <el-select v-model="selected" clearable placeholder="请选择考试">
+          <el-option key="all" value="all" label="全部考试"></el-option>
           <el-option
             v-for="item in exams"
             :key="item.value"
-            :label="item.label"
+            :label="item.label + ' (' + item.value + ')'"
             :value="item.value"
           >
           </el-option>
         </el-select>
       </el-col>
       <el-col :span="2"
-        ><el-button icon="el-icon-search" circle></el-button
+        ><el-button
+          icon="el-icon-search"
+          circle
+          @click="displayExam"
+        ></el-button
       ></el-col>
-      <el-col :span="1" :offset="16"
+      <el-col :span="1" :offset="14"
         ><div class="block">
           <span class="demonstration">查分中</span>
           <el-color-picker v-model="checkingColor"></el-color-picker>
@@ -36,7 +41,7 @@
     </el-row>
     <el-table
       v-loading="gradeLoading"
-      :data="grade"
+      :data="displayGrade"
       element-loading-text="Loading"
       border
       fit
@@ -102,7 +107,11 @@
       <el-form :model="subjects">
         <br />
         <el-form-item label="查分科目" label-width="auto">
-          <el-select v-model="selectedSubject" placeholder="请选择查分科目">
+          <el-select
+            v-model="selectedSubject"
+            placeholder="请选择查分科目"
+            clearable
+          >
             <el-option
               v-for="subject in subjects"
               :label="subject"
@@ -111,10 +120,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="查分考试" label-width="auto">
-          <el-select v-model="selectedExam" placeholder="请选择查分考试">
+          <el-select
+            v-model="selectedExam"
+            placeholder="请选择查分考试"
+            clearable
+          >
             <el-option
               v-for="exam in exams"
-              :label="exam.label"
+              :label="exam.label + ' (' + exam.value + ')'"
               :value="exam.value"
             ></el-option>
           </el-select>
@@ -188,6 +201,7 @@ export default {
   data() {
     return {
       grade: null,
+      displayGrade: [],
       gradeLoading: true,
       exams: [],
       subjects: [],
@@ -214,6 +228,7 @@ export default {
       this.gradeLoading = true;
       getGrade().then((response) => {
         this.grade = response.data.grade;
+        this.displayGrade = response.data.grade;
         this.gradeLoading = false;
         this.grade.forEach((e, i) => {
           this.exams.push({ value: e.Time, label: e.ExamName });
@@ -227,10 +242,30 @@ export default {
           }
         });
         // duplicate removal
+        this.exams = this.exams.filter(
+          (item, index) => this.exams.indexOf(item) === index
+        );
         this.subjects = this.subjects.filter(
           (item, index) => this.subjects.indexOf(item) === index
         );
+        // sort
+        this.exams.sort((a, b) => {
+          var t1 = new Date(Date.parse(a.value.replace(/-/g, "/")));
+          var t2 = new Date(Date.parse(b.value.replace(/-/g, "/")));
+          return t1.getTime() - t2.getTime();
+        });
       });
+    },
+    displayExam() {
+      this.displayGrade = [];
+      this.grade.forEach((e) => {
+        if (e.Time === this.selected) {
+          this.displayGrade.push(e);
+        }
+      });
+      if (this.selected === "all") {
+        this.displayGrade = this.grade;
+      }
     },
     statusShow({ row, rowIndex }) {
       if (this.checkingRowIndex.includes(rowIndex)) {
