@@ -122,6 +122,25 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/charts',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'Visualization',
+    meta: {
+      title: 'Visualization',
+      icon: 'chart'
+    },
+    children: [
+      {
+        path: 'line',
+        component: () => import('@/views/visualization/index'),
+        name: 'LineChart',
+        meta: { title: 'Line Chart', noCache: true }
+      }
+    ]
+  },
+
+  {
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',
